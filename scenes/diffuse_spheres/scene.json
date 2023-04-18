@@ -1,0 +1,54 @@
+{
+    "media": [],
+    "bsdfs": [
+        {
+          "name": "gray",
+          "albedo": 0.7,
+          "type": "lambert"
+        }
+    ],
+    "primitives": [
+        {
+          "type": "sphere",
+          "center": [0.0, 1.0, 0.0],
+          "radius": 1.0,
+           "bsdf": "gray"
+        },
+        {
+          "type": "sphere",
+           "center": [0.0, -1000.0, 0.0],
+           "radius": 1000.0,
+           "bsdf": "gray"
+        }
+    ],
+    "camera": {
+        "xres": 512,
+        "yres": 512,
+        "transform": {
+            "position": [
+                0,
+                0,
+                5
+            ],
+            "look_at": [
+                0.0,
+                1.0,
+                0.0
+            ],
+            "up": [
+                0,
+                1,
+                0
+            ]
+        },
+        "fov": 35
+    },
+    "renderer": {
+      "max_bounces": 64,
+      "spp": 512,
+      "threads": 16,
+      "output_file": "diffuse.png",
+      "type": "path",
+      "acceleration": "bvh"
+    }
+}

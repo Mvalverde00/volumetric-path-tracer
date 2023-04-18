@@ -1,0 +1,65 @@
+{
+    "media": [],
+    "bsdfs": [
+        {
+          "name": "hair",
+          "albedo": 0.7,
+          "type": "hair"
+        }
+    ],
+    "primitives": [
+        {
+            "transform": {
+                "position": [
+                    0,
+                    9.4,
+                    0
+                ],
+                "scale": [
+                    0.1,
+                    0.133,
+                    0.1
+                ],
+                "rotation": [
+                    -90,
+                    -90,
+                    180
+                ]
+            },
+            "type": "curves",
+            "file": "scenes/hair.pbrt",
+            "curve_thickness": 0.05,
+            "bsdf": "hair"
+        }
+    ],
+    "camera": {
+        "xres": 512,
+        "yres": 512,
+        "transform": {
+            "position": [
+                -0.234672,
+                16.5124,
+                -25.3482
+            ],
+            "look_at": [
+                0.134185,
+                9.92412,
+                -0.828005
+            ],
+            "up": [
+                0,
+                1,
+                0
+            ]
+        },
+        "fov": 35
+    },
+    "renderer": {
+      "max_bounces": 32,
+      "spp": 2000,
+      "threads": 20,
+      "output_file": "straight_hair.png",
+      "type": "path",
+      "acceleration": "bvh"
+    }
+}

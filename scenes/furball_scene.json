@@ -1,0 +1,61 @@
+{
+    "media": [],
+    "bsdfs": [
+        {
+            "name": "hair",
+            "albedo": 0.7,
+            "type": "lambert"
+        }
+    ],
+    "primitives": [
+        {
+            "transform": {
+                "position": [
+                    0,
+                    9.4,
+                    0
+                ],
+                "scale": 2,
+                "rotation": [
+                    0,
+                    90,
+                    0
+                ]
+            },
+            "type": "curves",
+            "file": "models/furball.fiber",
+            "curve_thickness": 0.001,
+            "bsdf": "hair"
+        }
+    ],
+    "camera": {
+        "xres": 500,
+        "yres": 500,
+        "transform": {
+            "position": [
+                -10.6677,
+                14.3141,
+                10.2879
+            ],
+            "look_at": [
+                -0.433688,
+                12.3915,
+                0.142558
+            ],
+            "up": [
+                0,
+                1,
+                0
+            ]
+        },
+        "fov": 35
+    },
+    "renderer": {
+        "max_bounces": 64,
+        "spp": 1,
+        "threads": 16,
+        "output_file": "furball.png",
+        "type": "path",
+        "acceleration": "none"
+    }
+}

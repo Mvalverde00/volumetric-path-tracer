@@ -1,0 +1,66 @@
+{
+    "media": [],
+    "bsdfs": [
+        {
+          "name": "hair",
+          "albedo": 0.7,
+          "eumelanin": 1.3,
+          "type": "hair"
+        }
+    ],
+    "primitives": [
+        {
+            "transform": {
+                "position": [
+                    0,
+                    9.4,
+                    0
+                ],
+                "scale": [
+                    0.1,
+                    0.133,
+                    0.1
+                ],
+                "rotation": [
+                    -90,
+                    -90,
+                    180
+                ]
+            },
+            "type": "curves",
+            "file": "scenes/curly/hair.pbrt",
+            "curve_thickness": 0.05,
+            "bsdf": "hair"
+        }
+    ],
+    "camera": {
+        "xres": 500,
+        "yres": 500,
+        "transform": {
+            "position": [
+                -0.234672,
+                16.5124,
+                -25.3482
+            ],
+            "look_at": [
+                0.134185,
+                9.92412,
+                -0.828005
+            ],
+            "up": [
+                0,
+                1,
+                0
+            ]
+        },
+        "fov": 35
+    },
+    "renderer": {
+      "max_bounces": 64,
+      "spp": 1000,
+      "threads": 20,
+      "output_file": "curly_hair.png",
+      "type": "path",
+      "acceleration": "bvh"
+    }
+}

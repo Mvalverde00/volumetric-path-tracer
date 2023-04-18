@@ -1,0 +1,1 @@
+Shape "curve" "string type" [ "cylinder" ] "point P" [ -2.0 1.0 0.0 0.0 1.0 0.0 1.0 1.0 0.0 2.0 1.0 0.0 ] "float width0" [ 1.0 ] "float width1" [ 1.0 ]

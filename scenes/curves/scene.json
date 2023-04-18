@@ -1,0 +1,59 @@
+{
+    "media": [],
+    "bsdfs": [
+        {
+          "name": "hair",
+          "albedo": [1.0, 0.3, 0.3],
+          "type": "lambert"
+        },
+        {
+          "name": "gray",
+          "albedo": 0.7,
+          "type": "lambert"
+        }
+    ],
+    "primitives": [
+        {
+            "type": "curves",
+            "file": "scenes/curves/hair.pbrt",
+            "curve_thickness": 0.05,
+            "bsdf": "hair"
+        },
+        {
+          "type": "sphere",
+           "center": [1.0, 2.50, 0.0],
+           "radius": 0.8,
+           "bsdf": "gray"
+        }
+    ],
+    "camera": {
+        "xres": 1024,
+        "yres": 1024,
+        "transform": {
+            "position": [
+                0,
+                2.5,
+                10
+            ],
+            "look_at": [
+                0.0,
+                2.5,
+                0.0
+            ],
+            "up": [
+                0,
+                1,
+                0
+            ]
+        },
+        "fov": 45
+    },
+    "renderer": {
+      "max_bounces": 64,
+      "spp": 32,
+      "threads": 16,
+      "output_file": "curves.png",
+      "type": "normal",
+      "acceleration": "bvh"
+    }
+}

@@ -1,0 +1,152 @@
+{
+    "bsdfs": [
+        {
+            "name": "black_hair",
+            "albedo": 0.7,
+            "eumelanin": 8,
+            "type": "hair"
+        },
+        {
+            "name": "red_hair",
+            "albedo": [0.72156, 0.2627, 0.07058],
+            "eumelanin": 2,
+            "type": "hair"
+        },
+        {
+            "name": "brown_hair",
+            "albedo": [0.749, 0.52549, 0.1137],
+            "eumelanin": 0.8,
+            "type": "hair"
+        },
+        {
+            "name": "blonde_hair",
+            "albedo": [1.0, 0.8588, 0.349],
+            "eumelanin": 0.2,
+            "type": "hair"
+        }
+    ],
+    "primitives": [
+        {
+            "transform": {
+                "position": [
+                    -4.0,
+                    9.399999618530273,
+                    0.0
+                ],
+                "scale": [
+                    0.09999999403953552,
+                    0.13300000131130219,
+                    0.09999999403953552
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    179.99998474121094
+                ]
+            },
+            "type": "curves",
+            "bsdf": "black_hair",
+            "file": "scenes/four_curls/black_hair.pbrt",
+            "curve_thickness": 0.004
+        },
+        {
+            "transform": {
+                "position": [
+                    -1.3299999237060547,
+                    9.399999618530273,
+                    0.0
+                ],
+                "scale": [
+                    0.09999999403953552,
+                    0.13300000131130219,
+                    0.09999999403953552
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    179.99998474121094
+                ]
+            },
+            "type": "curves",
+            "bsdf": "red_hair",
+            "file": "scenes/four_curls/red_hair.pbrt",
+            "curve_thickness": 0.004
+        },
+        {
+            "transform": {
+                "position": [
+                    1.3299999237060547,
+                    9.399999618530273,
+                    0.0
+                ],
+                "scale": [
+                    0.09999999403953552,
+                    0.13300000131130219,
+                    0.09999999403953552
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    179.99998474121094
+                ]
+            },
+            "type": "curves",
+            "bsdf": "brown_hair",
+            "file": "scenes/four_curls/brown_hair.pbrt",
+            "curve_thickness": 0.004
+        },
+        {
+            "transform": {
+                "position": [
+                    4.0,
+                    9.399999618530273,
+                    0.0
+                ],
+                "scale": [
+                    0.09999999403953552,
+                    0.13300000131130219,
+                    0.09999999403953552
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    179.99998474121094
+                ]
+            },
+            "type": "curves",
+            "bsdf": "blonde_hair",
+            "file": "scenes/four_curls/blonde_hair.pbrt",
+            "curve_thickness": 0.004
+        }
+    ],
+    "camera": {
+        "xres": 512,
+        "yres": 512,
+        "transform": {
+            "position": [
+                -0.05528595671057701,
+                5.929762363433838,
+                17.065105438232422
+            ],
+            "look_at": [
+                -0.05528319999575615,
+                5.878389835357666,
+                -1.1962699890136719
+            ],
+            "up": [
+                0.0,
+                1.0,
+                0.0
+            ]
+        },
+        "fov": 35.0
+    },
+    "renderer": {
+        "max_bounces": 64,
+        "spp": 1300,
+        "threads": 20,
+        "output_file": "four_curls_hair.png",
+        "type": "path",
+        "acceleration": "bvh"
+    }
+}
