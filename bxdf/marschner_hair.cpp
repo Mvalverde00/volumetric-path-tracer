@@ -265,28 +265,13 @@ std::vector<float> MarschnerHair::get_ap_pdf(float h, float cos_theta_o) {
 }
 
 glm::vec3 MarschnerHair::sample(const Intersection& isect, const glm::vec3& wo) {
-    
-  /*
-  // Sample wi uniformly from hemisphere aligned with
-  // +z axis.
-  glm::vec3 wi = randCosineHemisphere();
-
-  // Rotate wi to match actual normal orientation.
-  return rotateVector(orientFromZAxis(isect.n), wi);
-  */
-
-  
   float h = -1.0f + isect.v * 2.0f;
-  
-  
- 
+
   glm::vec3 wo_local = rotateVector(orientToZAxis(isect.n), wo);
 
   float sin_theta_o = wo_local.x;
   float cos_theta_o = safe_sqrt(1.0f - sin_theta_o * sin_theta_o);
   float phi_o = std::atan2(wo_local.z, wo_local.y);
-  
-
 
   std::vector<float> ap_pdf = get_ap_pdf(h, cos_theta_o);
   float threshold = randFloat();

@@ -25,20 +25,11 @@ class NaivePathIntegrator : public Integrator {
       glm::vec3 wi = isect.brdf->sample(isect, wo);
       float pdf = isect.brdf->pdf(wo, wi, isect);
 
-      /*
-      std::cout << "isect point = " << isect.point.x << ", " << isect.point.y << ", " << isect.point.z << "\n";
-      std::cout << "isect v =" << isect.v << "\n";
-      std::cout << "wo=" << wo.x << ", " << wo.y << ", " << wo.z << "\n";
-      Color out = isect.brdf->eval(wo, wi, isect);
-      std::cout << "pdf=" << pdf << ";  BRDF=" << out.x << "," << out.y << "," << out.z << "\n";
-      std::cout << "wi=" << wi.x << ", " << wi.y << ", " << wi.z << "\n";
-      */
+      return (isect.brdf->eval(wo, wi, isect) / pdf) * ray_color(scene, Ray(isect.point, wi), depth - 1, isect.err);
 
-      //return (isect.brdf->eval(wo, wi, isect) / pdf) * ray_color(scene, Ray(isect.point, wi), depth - 1, isect.err);
-      
       // TODO: Doesn't work with Lambertian.
-      return ((float)fabs(glm::dot(wi, isect.n))) * (isect.brdf->eval(wo, wi, isect) / pdf) * ray_color(scene, Ray(isect.point, wi), depth - 1, isect.err);
-      
+      // return ((float)fabs(glm::dot(wi, isect.n))) * (isect.brdf->eval(wo, wi, isect) / pdf) * ray_color(scene, Ray(isect.point, wi), depth - 1, isect.err);
+
       // TODO: In theory this should be used as optimization, eventually.
       //return isect.brdf->evalWithPdf(wo, wi, isect) * ray_color(scene, Ray(isect.point, wi), depth - 1);
     }
@@ -62,15 +53,11 @@ class NaivePathIntegrator : public Integrator {
         for (int sample = 0; sample < settings.samples; sample++) {
           Ray r = cam.getRay(screenX, screenY, xres, yres, true);
 
-          // TODO: DELETE DEBUG
-          //r.dir = glm::vec3(0.0116387, -0.0116387, -0.999865);
-
           // Reposition ray so that it begins on film plane
           r = Ray(r.at(1.0f), glm::normalize(r.dir));
 
 
           c += ray_color(scene, r, settings.max_depth, 0.001f);
-          //std::cout << "===========\n";
         }
         out.set_pixel(screenX, screenY, c / float(settings.samples));
       }
@@ -94,27 +81,5 @@ public:
         });
       }
     }
-
-    /*
-    int xres = out.get_width();
-    int yres = out.get_height();
-    
-
-    Intersection isect;
-    for (int x = 0; x < xres; x++) {
-      for (int y = 0; y < yres; y++) {
-        Color c = glm::vec3(0.0, 0.0, 0.0);
-        
-        for (int sample = 0; sample < settings.samples; sample++) {
-          Ray r = cam.getRay(x, y, xres, yres, true);
-          // Reposition ray so that it begins on film plane
-          r = Ray(r.at(1.0f), glm::normalize(r.dir));
-          
-          c += ray_color(scene, r, settings.max_depth);
-        }
-
-        out.set_pixel(x, y, c/float(settings.samples));
-      }
-    }*/
   }
 };
