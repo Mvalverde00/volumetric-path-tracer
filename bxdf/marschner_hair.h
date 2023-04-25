@@ -20,7 +20,7 @@ class MarschnerHair : public Brdf {
 public:
   Color eval(const glm::vec3& wo, const glm::vec3& wi, const Intersection& isect);
 
-  glm::vec3 sample(const Intersection& isect, const glm::vec3& wo);
+  std::optional<glm::vec3> sample(const Intersection& isect, const glm::vec3& wo);
 
   float pdf(const glm::vec3& wo, const glm::vec3& wi, const Intersection& isect);
 

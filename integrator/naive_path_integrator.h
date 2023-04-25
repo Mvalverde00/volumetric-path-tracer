@@ -1,6 +1,7 @@
 #pragma once
 #include "integrator.h"
 
+#include <optional>
 #include <vector>
 #include <thread>
 
@@ -22,20 +23,29 @@ class NaivePathIntegrator : public Integrator {
     Intersection isect;
     if (scene.intersect(r, t_min, 9999999.f, isect)) {
       glm::vec3 wo = -r.dir;
-      glm::vec3 wi = isect.brdf->sample(isect, wo);
-      float pdf = isect.brdf->pdf(wo, wi, isect);
+      std::optional<glm::vec3> wi = isect.brdf->sample(isect, wo);
 
-      return (isect.brdf->eval(wo, wi, isect) / pdf) * ray_color(scene, Ray(isect.point, wi), depth - 1, isect.err);
+      if (wi.has_value()) {
+        float pdf = isect.brdf->pdf(wo, *wi, isect);
+        return (isect.brdf->eval(wo, *wi, isect) / pdf) *
+               ray_color(scene, Ray(isect.point, *wi), depth - 1, isect.err);
 
-      // TODO: Doesn't work with Lambertian.
-      // return ((float)fabs(glm::dot(wi, isect.n))) * (isect.brdf->eval(wo, wi, isect) / pdf) * ray_color(scene, Ray(isect.point, wi), depth - 1, isect.err);
+        // TODO: Doesn't work with Lambertian.
+        // return ((float)fabs(glm::dot(wi, isect.n))) * (isect.brdf->eval(wo,
+        // wi, isect) / pdf) * ray_color(scene, Ray(isect.point, wi), depth - 1,
+        // isect.err);
 
-      // TODO: In theory this should be used as optimization, eventually.
-      //return isect.brdf->evalWithPdf(wo, wi, isect) * ray_color(scene, Ray(isect.point, wi), depth - 1);
+        // TODO: In theory this should be used as optimization, eventually.
+        // return isect.brdf->evalWithPdf(wo, wi, isect) * ray_color(scene,
+        // Ray(isect.point, wi), depth - 1);
+      } else {
+        glm::vec3 emitted = isect.brdf->emit();
+        return isect.brdf->emit();
+      }
     }
 
     // Ray hits scene background
-    return Color(0.7, 0.7, 1.0);
+    return Color(0.0, 0.0, 0.0);
   }
 
   void render_tile(ImageTile tile, const Scene& scene, Camera& cam, Image& out, IntegratorSettings& settings) {

@@ -264,7 +264,7 @@ std::vector<float> MarschnerHair::get_ap_pdf(float h, float cos_theta_o) {
   return ap_pdf;
 }
 
-glm::vec3 MarschnerHair::sample(const Intersection& isect, const glm::vec3& wo) {
+std::optional<glm::vec3> MarschnerHair::sample(const Intersection& isect, const glm::vec3& wo) {
   float h = -1.0f + isect.v * 2.0f;
 
   glm::vec3 wo_local = rotateVector(orientToZAxis(isect.n), wo);

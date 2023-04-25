@@ -16,7 +16,7 @@ public:
     return diffuse * glm::dot(isect.n, wi) / PI;
   }
 
-  glm::vec3 sample(const Intersection& isect, const glm::vec3& wo) {
+  std::optional<glm::vec3> sample(const Intersection& isect, const glm::vec3& wo) {
     // Sample wi uniformly from hemisphere aligned with
     // +z axis.
     //glm::vec3 wi = randUniformHemisphere();

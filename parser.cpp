@@ -16,6 +16,7 @@
 
 #include "bxdf/lambertian.h"
 #include "bxdf/marschner_hair.h"
+#include "bxdf/light.h"
 
 #include "geometry/sphere.h"
 #include "geometry/curve.h"
@@ -60,6 +61,10 @@ void parse_brdf(json desc, Scene& scene) {
     scene.add_mat(desc.at("name"), new MarschnerHair(desc));
     return;
   }
+  else if (type == "light") {
+    scene.add_mat(desc.at("name"), new Light(desc));
+    return;
+  }
 
   std::cout << "Error parsing brdf: '" << type << "' is not a valid brdf.\n";
   exit(1);
@@ -73,7 +78,6 @@ void parse_hair_file(std::string filename, std::string matname, Scene& scene) {
     exit(1);
   }
 
-  
   std::string dummy;
   while (file >> dummy) {
 
