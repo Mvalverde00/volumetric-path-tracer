@@ -1,0 +1,59 @@
+{
+    "media": [],
+    "bsdfs": [
+        {
+          "name": "gray",
+          "albedo": 0.7,
+          "type": "lambert"
+        },
+        {
+          "name": "whitelight",
+          "emitted": [2.0, 2.0, 2.0],
+          "type": "light"
+        }
+    ],
+    "primitives": [
+        {
+          "type": "sphere",
+          "center": [1.0, 1.0, 0.0],
+          "radius": 0.5,
+           "bsdf": "whitelight"
+        },
+        {
+          "type": "sphere",
+           "center": [0.0, -1000.0, 0.0],
+           "radius": 1000.0,
+           "bsdf": "gray"
+        }
+    ],
+    "camera": {
+        "xres": 512,
+        "yres": 512,
+        "transform": {
+            "position": [
+                0,
+                0.5,
+                5
+            ],
+            "look_at": [
+                0.0,
+                1.0,
+                0.0
+            ],
+            "up": [
+                0,
+                1,
+                0
+            ]
+        },
+        "fov": 35
+    },
+    "renderer": {
+      "max_bounces": 6,
+      "spp": 1024,
+      "threads": 18,
+      "output_file": "fog.png",
+      "type": "path",
+      "acceleration": "bvh"
+    }
+}

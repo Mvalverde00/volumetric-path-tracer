@@ -30,7 +30,6 @@ public:
 
   Light(const nlohmann::json& desc) {
     emitted = parse_vec3(desc.at("emitted"));
-    std::cerr << "Parsed with emitted=" << emitted.x << ", " << emitted.y << ", " << emitted.z << "\n";
   }
 
 };

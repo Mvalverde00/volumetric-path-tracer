@@ -1,5 +1,6 @@
 #pragma once
 #include "integrator.h"
+#include "../util.h"
 
 #include <optional>
 #include <vector>
@@ -14,14 +15,36 @@ struct ImageTile {
   int height;
 };
 
+inline float hgphase(float g, float cos_theta) {
+  float denom = 1.0 + g*g + 2*g*cos_theta;
+  return (1.0 - g*g) / (4.0 * 3.141592653f * denom * sqrt(denom));
+}
+
 class NaivePathIntegrator : public Integrator {
 
   Color ray_color(const Scene& scene, const Ray& r, int depth, float t_min) {
     // If maximum depth exceeded, pixel is black
     if (depth <= 0) return Color(0.0, 0.0, 0.0);
 
+    // Find intersection with surface, ignoring any media.
     Intersection isect;
-    if (scene.intersect(r, t_min, 9999999.f, isect)) {
+    bool has_intersection = scene.intersect(r, t_min, 9999999.f, isect);
+
+    // Check where we would intersect media.
+    float extinction_coeff = 0.4;
+    float collision_t = -log(1.0f - randFloat()) / extinction_coeff;
+    float albedo = 0.5;
+
+    if (collision_t < isect.t) {
+      // Isotropic phase function.
+      glm::vec3 wo = -r.dir;
+      glm::vec3 wi = randUniformSphere();
+      float pdf = 1.0 / (4.0 * 3.141592653f);
+      float phase = hgphase(-0.6, glm::dot(wi, wo));
+
+      return (albedo * phase / pdf) * ray_color(scene, Ray(r.at(collision_t), wi), depth - 1, 0.0f);
+    }
+    else if (has_intersection)  {
       glm::vec3 wo = -r.dir;
       std::optional<glm::vec3> wi = isect.brdf->sample(isect, wo);
 
