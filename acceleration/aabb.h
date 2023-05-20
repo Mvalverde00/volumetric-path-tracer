@@ -102,6 +102,12 @@ public:
     result.maximum = new_max;
     return true;
   }
+
+  bool contains(glm::vec3 p) {
+    return (p.x >= minimum.x && p.x <= maximum.x) ||
+           (p.y >= minimum.y && p.y <= maximum.y) ||
+           (p.z >= minimum.z && p.z <= maximum.z);
+  }
 };
 
 

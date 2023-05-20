@@ -32,6 +32,10 @@ void Scene::add_mat(std::string name, Brdf* mat) {
   mats[name] = mat;
 }
 
+void Scene::set_medium(Medium* med) {
+  medium = med;
+}
+
 Brdf* Scene::get_mat(std::string name) {
   if (mats.find(name) == mats.end()) {
     std::cout << "No material with name '" << name << "'.\n";
@@ -50,4 +54,9 @@ void Scene::init_acceleration(Acceleration* acceleration) {
 
 bool Scene::intersect(const Ray& r, float t_min, float t_max, Intersection& isect) const {
   return accel->intersect(r, t_min, t_max, isect);
+}
+
+bool Scene::intersect_media(const Ray &r, float t_min, float t_max,
+                      Intersection &isect) const {
+  return medium->intersect(r, t_min, t_max, isect);
 }

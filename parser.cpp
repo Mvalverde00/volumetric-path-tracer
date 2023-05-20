@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <openvdb/openvdb.h>
 
 #include "integrator/normal_integrator.h"
 #include "integrator/naive_path_integrator.h"
@@ -20,6 +21,9 @@
 
 #include "geometry/sphere.h"
 #include "geometry/curve.h"
+
+#include "medium/grid.h"
+
 
 using namespace nlohmann;
 
@@ -67,6 +71,24 @@ void parse_brdf(json desc, Scene& scene) {
   }
 
   std::cout << "Error parsing brdf: '" << type << "' is not a valid brdf.\n";
+  exit(1);
+}
+
+void parse_media(json desc, Scene& scene) {
+  std::string type = desc.at("type");
+
+  if (type == "grid") {
+    openvdb::initialize();
+
+    openvdb::io::File file(desc.at("file"));
+
+    file.open();
+    scene.set_medium(new Grid(file));
+    file.close();
+    return;
+  }
+
+  std::cout << "Error parsing medium: '" << type << "' is not a valid medium .\n";
   exit(1);
 }
 
@@ -224,6 +246,7 @@ bool parse_scene(const std::string& fname, RenderData& rd) {
 
   json mats = js.at("bsdfs");
   json objs = js.at("primitives");
+  json media = js.at("media");
 
   // Parse render details and store acceleration structure for later usage
   std::cout << "Parsing renderer...\n";
@@ -246,6 +269,10 @@ bool parse_scene(const std::string& fname, RenderData& rd) {
   // Finally, load scene objects and build acceleration
   for (auto& obj : objs) {
     parse_obj(obj, rd.scene);
+  }
+
+  for (auto &medium : media) {
+    parse_media(medium, rd.scene);
   }
 
   std::cout << "Creating acceleration structure...\n";
