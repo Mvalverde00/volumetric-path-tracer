@@ -1,0 +1,10 @@
+*.a
+compile_commands.json
+Pathtracer
+.cache/*
+CMakeFiles/*
+CMakeCache.txt
+
+# Ignore temp files created by spacemacs for recovery
+*/\.#*.cpp
+*/\.#*.h
