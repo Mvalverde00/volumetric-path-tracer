@@ -4,6 +4,7 @@ Pathtracer
 .cache/*
 CMakeFiles/*
 CMakeCache.txt
+Makefile
 
 # Ignore temp files created by spacemacs for recovery
 */\.#*.cpp
