@@ -49,10 +49,10 @@
         "fov": 35
     },
     "renderer": {
-      "max_bounces": 6,
-      "spp": 1024,
+      "max_bounces": 10,
+      "spp": 500,
       "threads": 18,
-      "output_file": "fog.png",
+      "output_file": "light.png",
       "type": "path",
       "acceleration": "bvh"
     }

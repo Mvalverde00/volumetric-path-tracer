@@ -66,7 +66,7 @@ void parse_brdf(json desc, Scene& scene) {
     return;
   }
   else if (type == "light") {
-    scene.add_mat(desc.at("name"), new Light(desc));
+    scene.add_mat(desc.at("name"), new LightBrdf(desc));
     return;
   }
 

@@ -22,27 +22,26 @@ inline float hgphase(float g, float cos_theta) {
 
 class NaivePathIntegrator : public Integrator {
 
-  Color ray_color(const Scene& scene, const Ray& r, int depth, float t_min) {
+  Color ray_color(const Scene& scene, const Ray& r, int depth, int max_depth, float t_min) {
     // If maximum depth exceeded, pixel is black
     if (depth <= 0) return Color(0.0, 0.0, 0.0);
 
     // Find intersection with surface, ignoring any media.
-    Intersection isect;
+    Intersection isect, media_isect;
     bool has_intersection = scene.intersect(r, t_min, 9999999.f, isect);
 
     // Check where we would intersect media.
-    float extinction_coeff = 0.4;
-    float collision_t = -log(1.0f - randFloat()) / extinction_coeff;
-    float albedo = 0.5;
-
-    if (collision_t < isect.t) {
+    bool media_intersection = scene.intersect_media(r, t_min, 9999999.f, media_isect);
+    if (media_intersection && media_isect.t < isect.t) {
+      float albedo = 0.5;
       // Isotropic phase function.
       glm::vec3 wo = -r.dir;
       glm::vec3 wi = randUniformSphere();
       float pdf = 1.0 / (4.0 * 3.141592653f);
       float phase = hgphase(-0.6, glm::dot(wi, wo));
 
-      return (albedo * phase / pdf) * ray_color(scene, Ray(r.at(collision_t), wi), depth - 1, 0.0f);
+      Color direct = Color(10.0, 1.0, 1.0); // Sample lights to estimate direct lighting.
+      return direct + (albedo * phase / pdf) * ray_color(scene, Ray(r.at(media_isect.t), wi), depth - 1, max_depth, 0.0f);
     }
     else if (has_intersection)  {
       glm::vec3 wo = -r.dir;
@@ -50,24 +49,25 @@ class NaivePathIntegrator : public Integrator {
 
       if (wi.has_value()) {
         float pdf = isect.brdf->pdf(wo, *wi, isect);
-        return (isect.brdf->eval(wo, *wi, isect) / pdf) *
-               ray_color(scene, Ray(isect.point, *wi), depth - 1, isect.err);
-
-        // TODO: Doesn't work with Lambertian.
-        // return ((float)fabs(glm::dot(wi, isect.n))) * (isect.brdf->eval(wo,
-        // wi, isect) / pdf) * ray_color(scene, Ray(isect.point, wi), depth - 1,
-        // isect.err);
-
-        // TODO: In theory this should be used as optimization, eventually.
-        // return isect.brdf->evalWithPdf(wo, wi, isect) * ray_color(scene,
-        // Ray(isect.point, wi), depth - 1);
+        Color direct = scene.sample_lights(isect, wo);
+        return direct + (isect.brdf->eval(wo, *wi, isect) / pdf) *
+                         ray_color(scene, Ray(isect.point, *wi), depth - 1,
+                                   max_depth, isect.err);
       } else {
+        // glm::vec3 emitted = isect.brdf->emit();
+        // return isect.brdf->emit();
+
+        if (depth == max_depth) {
         glm::vec3 emitted = isect.brdf->emit();
         return isect.brdf->emit();
+        } else {
+          return Color(0.0, 0.0, 0.0);
+        }
       }
     }
 
     // Ray hits scene background
+    // return Color(0.7, 0.7, 1.0);
     return Color(0.0, 0.0, 0.0);
   }
 
@@ -90,7 +90,7 @@ class NaivePathIntegrator : public Integrator {
           r = Ray(r.at(1.0f), glm::normalize(r.dir));
 
 
-          c += ray_color(scene, r, settings.max_depth, 0.001f);
+          c += ray_color(scene, r, settings.max_depth, settings.max_depth, 0.001f);
         }
         out.set_pixel(screenX, screenY, c / float(settings.samples));
       }

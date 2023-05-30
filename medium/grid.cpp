@@ -23,11 +23,15 @@ bool Grid::intersect(const Ray &r, float t_min, float t_max,
     return false;
   }
 
+  // We have an intersection, and [t] is set to the beginning of the intersection
+  // with the bounding box.
   do {
     t -= logf(1.0f - randFloat()) / max_density;
-  } while (density(r.at(t)) <= randFloat() * max_density && is_inside(r.at(t)));
+  } while (density(r.at(t)) <= randFloat() * max_density && t <= t_max &&
+           is_inside(r.at(t)));
 
-  if (is_inside(r.at(t))) {
+  if (t <= t_max && is_inside(r.at(t))) {
+    isect.t = t;
     return true;
   }
 
@@ -46,7 +50,8 @@ Grid::Grid(openvdb::io::File &file) {
   grid = openvdb::gridPtrCast<openvdb::FloatGrid>(baseGrid);
 
   // Scale appropriately
-  grid->setTransform(openvdb::math::Transform::createLinearTransform(0.1));
+  // TODO: This should be read in somehow, eventually
+  grid->setTransform(openvdb::math::Transform::createLinearTransform(1));
 
   // Setup a sampler to read densities at points
   sampler =
@@ -62,10 +67,13 @@ Grid::Grid(openvdb::io::File &file) {
   this->bbox = AABB(glm::vec3(min.x(), min.y(), min.z()),
                     glm::vec3(max.x(), max.y(), max.z()));
 
+  std::cout << "Bounding box:" << min << ", " << max << "\n";
+
   // Calculate max density
   openvdb::math::MinMax<float> min_max =
       openvdb::tools::minMax(grid->tree(), true);
   max_density = min_max.max();
+  std::cout << "min/max density = " << min_max.min() << "/" << min_max.max() << "\n";
 
   // TODO: Actually load these from a file
   sigma_a = Color(0.5, 0.5, 0.5);

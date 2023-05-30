@@ -32,6 +32,7 @@ file(GLOB framework_src CONFIGURE_DEPENDS
 	"bxdf/*.cpp" "bxdf/*.h"
 	"integrator/*.cpp" "integrator/*.h"
 	"medium/*.cpp" "medium/*.h"
+	"light/*.cpp" "light/*.h"
 )
 add_library(Framework ${framework_src})
 target_link_libraries(Framework PUBLIC Dependencies)

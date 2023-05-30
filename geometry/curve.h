@@ -7,8 +7,6 @@ class Curve : public Geometry {
   int max_rec_depth;
   // Control points for curve
   glm::vec3 cp[4];
-  Brdf* material;
-
 
   int max_depth();
   void project(const Ray& r, const glm::mat3& proj_matrix, glm::vec3 transformed[4]);
@@ -21,7 +19,6 @@ public:
 
   bool intersect(const Ray& r, float t_min, float t_max, Intersection& isect);
   inline void bbox(AABB& box) const;
-
 };
 
 

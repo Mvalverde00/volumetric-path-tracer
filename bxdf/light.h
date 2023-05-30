@@ -4,11 +4,11 @@
 #include "../util.h"
 #include "../geometry/geometry.h"
 
-class Light : public Brdf {
+class LightBrdf : public Brdf {
   Color emitted;
 
 public:
-  Light(Color c) : emitted(c) {};
+  LightBrdf(Color c) : emitted(c) {};
 
   Color eval(const glm::vec3& wo, const glm::vec3& wi, const Intersection& isect) {
     return Color(0.0, 0.0, 0.0);
@@ -28,7 +28,7 @@ public:
 
   Color emit() override {return emitted;}
 
-  Light(const nlohmann::json& desc) {
+  LightBrdf(const nlohmann::json& desc) {
     emitted = parse_vec3(desc.at("emitted"));
   }
 

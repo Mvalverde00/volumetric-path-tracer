@@ -35,7 +35,7 @@ void Curve::project(const Ray& r, const glm::mat3& proj_matrix, glm::vec3 transf
   }
 }
 
-Curve::Curve() : width(1.0), material(NULL) {
+Curve::Curve() : width(1.0), Geometry(NULL) {
   for (int i = 0; i < 4; i++) {
     cp[i] = glm::vec3(1.0f);
   }
@@ -43,7 +43,7 @@ Curve::Curve() : width(1.0), material(NULL) {
   max_rec_depth = 2;
 }
 
-Curve::Curve(float width, const glm::vec3 c[4], Brdf* mat) : width(width), material(mat) {
+Curve::Curve(float width, const glm::vec3 c[4], Brdf* mat) : width(width), Geometry(mat) {
   for (int i = 0; i < 4; i++) {
     cp[i] = c[i];
   }

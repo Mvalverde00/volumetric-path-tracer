@@ -1,6 +1,7 @@
 #include "sphere.h"
 
 #include "../acceleration/aabb.h"
+#include "../util.h"
 
 bool Sphere::intersect(const Ray& r, float t_min, float t_max, Intersection& isect) {
   // Math taken from https://en.wikipedia.org/wiki/Line%E2%80%93sphere_intersection
@@ -37,4 +38,13 @@ bool Sphere::intersect(const Ray& r, float t_min, float t_max, Intersection& ise
 void Sphere::bbox(AABB& box) const {
   box.minimum = center - radius * glm::vec3(1.0, 1.0, 1.0);
   box.maximum = center + radius * glm::vec3(1.0, 1.0, 1.0);
+}
+
+void Sphere::sample(glm::vec3 & p, glm::vec3 & n) const {
+  n = randUniformSphere();
+  p = radius * n + center;
+}
+
+float Sphere::area() const {
+  return 4 * 3.14159265f * radius * radius;
 }
