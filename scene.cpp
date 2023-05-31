@@ -77,6 +77,7 @@ Color Scene::sample_lights(const Intersection &isect, const glm::vec3 wo) const 
   Intersection light_isect;
   glm::vec3 lp, ln; // light point and normal
   for (const auto light : lights) {
+    lp = isect.point;
     light->sample(lp, ln);
     glm::vec3 ldir = glm::normalize(lp - isect.point);
     Ray r(isect.point, ldir);

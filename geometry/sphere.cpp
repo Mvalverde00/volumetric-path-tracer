@@ -41,10 +41,26 @@ void Sphere::bbox(AABB& box) const {
 }
 
 void Sphere::sample(glm::vec3 & p, glm::vec3 & n) const {
+  // Assume the [p] we are passed in initially represents the point on the surface
+  // we are trying to cast a light ray from, and [n] is the corresponding normal.
+  glm::vec3 isect_point = p;
+
+  // Proceed normally
   n = randUniformSphere();
+  p = radius * n + center;
+
+  // Then we can always generate a point visible to the light, by sampling the
+  // correct hemisphere.
+  // NOTE: This means in [area], we only use the surface area of a hemisphere.
+  glm::vec3 ldir = p - isect_point;
+  if (glm::dot(ldir, n) > 0) {
+    n = -n;
+  }
   p = radius * n + center;
 }
 
 float Sphere::area() const {
-  return 4 * 3.14159265f * radius * radius;
+  // Since we are only considering the relevant hemisphere in [sample],
+  // this is the area of one hemisphere.
+  return 2 * 3.14159265f * radius * radius;
 }
