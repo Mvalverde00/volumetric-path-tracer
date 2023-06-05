@@ -41,8 +41,18 @@ void Scene::add_mat(std::string name, Brdf* mat) {
   mats[name] = mat;
 }
 
-void Scene::set_medium(Medium* med) {
-  medium = med;
+void Scene::set_medium(Medium *med) { medium = med; }
+
+void Scene::set_background(BackgroundLight light) {
+  background_light = light;
+
+  // TODO: Currently background lights are all uniform color, so we can
+  // plug in any vector here. We just want to ignore a pure-black background,
+  // since summing over it in the direct light sampling is a waste.
+  // Once environment maps are added, this will need some revision
+  if (background_light.emitted(glm::vec3(0.0, 0.0, 0.0)) != Color(0.0, 0.0, 0.0)) {
+    lights.push_back(&background_light);
+  }
 }
 
 Brdf* Scene::get_mat(std::string name) {
@@ -88,9 +98,13 @@ Color Scene::sample_lights(const Intersection &isect, const glm::vec3 wo) const 
     bool blocked = intersect(r, isect.err, dist, light_isect);
     if (n_dot_l > 0 && ln_dot_l > 0){
       if (blocked && light_isect.t < dist - 0.001) {continue;}
-      float solid_angle = light->area() / (dist * dist);
-      accum += solid_angle * ln_dot_l * isect.brdf->eval(wo, ldir, isect) * light->emitted(-ldir);
+      float pdf = light->pdf(lp, isect.point);
+      accum += pdf * ln_dot_l * isect.brdf->eval(wo, ldir, isect) * light->emitted(-ldir);
     }
   }
   return accum;
+}
+
+Color Scene::background_color(const glm::vec3& dir) const {
+  return background_light.emitted(dir);
 }

@@ -24,6 +24,8 @@
 
 #include "medium/grid.h"
 
+#include "light/background_light.h"
+
 
 using namespace nlohmann;
 
@@ -211,10 +213,12 @@ Acceleration* parse_renderer(json desc, RenderData& rd) {
   int bounces = desc.at("max_bounces");
   int spp = desc.at("spp");
   int threads = desc.at("threads");
+  bool allow_light_sampling = desc.at("allow_light_sampling");
 
   rd.isettings.max_depth = bounces;
   rd.isettings.samples = spp;
   rd.isettings.threads = threads;
+  rd.isettings.allow_light_sampling = allow_light_sampling;
 
 
   rd.out_file = desc.at("output_file");
@@ -264,6 +268,10 @@ bool parse_scene(const std::string& fname, RenderData& rd) {
   for (auto& mat : mats) {
     parse_brdf(mat, rd.scene);
   }
+
+  Color background_color = parse_vec3(js.at("background"));
+  rd.scene.set_background(BackgroundLight(background_color));
+
 
   std::cout << "Parsing objects...\n";
   // Finally, load scene objects and build acceleration

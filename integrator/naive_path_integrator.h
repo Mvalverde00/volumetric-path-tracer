@@ -22,7 +22,7 @@ inline float hgphase(float g, float cos_theta) {
 
 class NaivePathIntegrator : public Integrator {
 
-  Color ray_color(const Scene& scene, const Ray& r, int depth, int max_depth, float t_min) {
+  Color ray_color(const Scene& scene, const Ray& r, int depth, int max_depth, float t_min, bool sample_lights) {
     // If maximum depth exceeded, pixel is black
     if (depth <= 0) return Color(0.0, 0.0, 0.0);
 
@@ -40,8 +40,11 @@ class NaivePathIntegrator : public Integrator {
       float pdf = 1.0 / (4.0 * 3.141592653f);
       float phase = hgphase(-0.6, glm::dot(wi, wo));
 
-      Color direct = Color(10.0, 1.0, 1.0); // Sample lights to estimate direct lighting.
-      return direct + (albedo * phase / pdf) * ray_color(scene, Ray(r.at(media_isect.t), wi), depth - 1, max_depth, 0.0f);
+      Color direct = Color(0.0, 0.0, 0.0);
+      if (sample_lights) direct = scene.sample_lights(isect, wo); // Sample lights to estimate direct lighting.
+
+      // direct *= transmission(scene, ray); // Account for attenuation by media
+      return direct + (albedo * phase / pdf) * ray_color(scene, Ray(r.at(media_isect.t), wi), depth - 1, max_depth, 0.0f, sample_lights);
     }
     else if (has_intersection)  {
       glm::vec3 wo = -r.dir;
@@ -49,15 +52,19 @@ class NaivePathIntegrator : public Integrator {
 
       if (wi.has_value()) {
         float pdf = isect.brdf->pdf(wo, *wi, isect);
-        Color direct = scene.sample_lights(isect, wo);
+
+        Color direct = Color(0.0, 0.0, 0.0);
+        if (sample_lights) direct = scene.sample_lights(isect, wo);
+
         return direct + (isect.brdf->eval(wo, *wi, isect) / pdf) *
                          ray_color(scene, Ray(isect.point, *wi), depth - 1,
-                                   max_depth, isect.err);
+                                   max_depth, isect.err, sample_lights);
       } else {
         // glm::vec3 emitted = isect.brdf->emit();
         // return isect.brdf->emit();
 
-        if (depth == max_depth) {
+        // If we aren't directly sampling lights, its OK to count emission here.
+        if (depth == max_depth || !sample_lights) {
         glm::vec3 emitted = isect.brdf->emit();
         return isect.brdf->emit();
         } else {
@@ -67,8 +74,7 @@ class NaivePathIntegrator : public Integrator {
     }
 
     // Ray hits scene background
-    // return Color(0.7, 0.7, 1.0);
-    return Color(0.0, 0.0, 0.0);
+    return scene.background_color(r.dir);
   }
 
   void render_tile(ImageTile tile, const Scene& scene, Camera& cam, Image& out, IntegratorSettings& settings) {
@@ -89,8 +95,7 @@ class NaivePathIntegrator : public Integrator {
           // Reposition ray so that it begins on film plane
           r = Ray(r.at(1.0f), glm::normalize(r.dir));
 
-
-          c += ray_color(scene, r, settings.max_depth, settings.max_depth, 0.001f);
+          c += ray_color(scene, r, settings.max_depth, settings.max_depth, 0.001f, settings.allow_light_sampling);
         }
         out.set_pixel(screenX, screenY, c / float(settings.samples));
       }

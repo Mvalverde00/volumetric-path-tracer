@@ -48,12 +48,14 @@
         },
         "fov": 35
     },
+    "background": [0.0, 0.0, 0.0],
     "renderer": {
       "max_bounces": 10,
-      "spp": 500,
+      "spp": 50,
       "threads": 18,
       "output_file": "light.png",
       "type": "path",
+      "allow_light_sampling": false,
       "acceleration": "bvh"
     }
 }
