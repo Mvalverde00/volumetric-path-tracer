@@ -25,4 +25,5 @@ public:
   Grid(openvdb::io::File &file);
 
   bool intersect(const Ray &r, float t_min, float t_max, Intersection &isect);
+  Color Tr(const Ray &r, float t_max);
 };

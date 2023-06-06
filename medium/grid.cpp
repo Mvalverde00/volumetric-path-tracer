@@ -38,6 +38,26 @@ bool Grid::intersect(const Ray &r, float t_min, float t_max,
   return false;
 }
 
+Color Grid::Tr(const Ray &r, float t_max) {
+  // If we miss the bounding box, we miss the grid
+  float t = 0.0;
+  if (!bbox.hit_t(r, 0.0f, t_max, t)) {
+    return Color(1.0, 1.0, 1.0);
+  }
+
+  // We have an intersection, and [t] is set to the beginning of the
+  // intersection with the bounding box.
+  Color tr = Color(1.0, 1.0, 1.0);
+  do {
+    t -= logf(1.0f - randFloat()) / max_density;
+    float d = density(r.at(t));
+    tr *= 1.0 - std::max(0.0f, d / max_density);
+  } while (t <= t_max && is_inside(r.at(t)));
+
+  float albedo = 0.5;
+  return tr * albedo;
+}
+
 Grid::Grid(openvdb::io::File &file) {
   // Read the grid from file
   openvdb::GridBase::Ptr baseGrid;

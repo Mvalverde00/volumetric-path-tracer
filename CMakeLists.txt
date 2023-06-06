@@ -14,6 +14,9 @@ set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES
 )
 set(CMAKE_CXX_FLAGS -Wl,--copy-dt-needed-entries)
 
+#add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
+#add_link_options(-fsanitize=address -fno-omit-frame-pointer)
+
 project(pathtracer
 	VERSION 1.0
 	LANGUAGES CXX)

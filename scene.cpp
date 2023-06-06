@@ -51,6 +51,7 @@ void Scene::set_background(BackgroundLight light) {
   // since summing over it in the direct light sampling is a waste.
   // Once environment maps are added, this will need some revision
   if (background_light.emitted(glm::vec3(0.0, 0.0, 0.0)) != Color(0.0, 0.0, 0.0)) {
+    std::cout << "Preparing background for explicit light sampling...\n";
     lights.push_back(&background_light);
   }
 }
@@ -99,7 +100,9 @@ Color Scene::sample_lights(const Intersection &isect, const glm::vec3 wo) const 
     if (n_dot_l > 0 && ln_dot_l > 0){
       if (blocked && light_isect.t < dist - 0.001) {continue;}
       float pdf = light->pdf(lp, isect.point);
-      accum += pdf * ln_dot_l * isect.brdf->eval(wo, ldir, isect) * light->emitted(-ldir);
+      Color tr = transmission(Ray(isect.point, ldir), dist);
+      accum += tr * pdf * ln_dot_l * isect.brdf->eval(wo, ldir, isect) * light->emitted(-ldir);
+      continue;
     }
   }
   return accum;
@@ -107,4 +110,13 @@ Color Scene::sample_lights(const Intersection &isect, const glm::vec3 wo) const 
 
 Color Scene::background_color(const glm::vec3& dir) const {
   return background_light.emitted(dir);
+}
+
+Color Scene::transmission(const Ray &r, float t_max) const {
+  // TODO: Eventually we will loop over all media and multiply transmissions
+  // from all of them
+  if (medium) {
+    return medium->Tr(r, t_max);
+  }
+  return Color(1.0, 1.0, 1.0);
 }

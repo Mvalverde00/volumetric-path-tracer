@@ -43,4 +43,6 @@ public:
   Color sample_lights(const Intersection &isect, const glm::vec3 wo) const;
 
   Color background_color(const glm::vec3& dir) const;
+
+  Color transmission(const Ray &r, float t_max) const;
 };

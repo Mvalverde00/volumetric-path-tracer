@@ -1,6 +1,7 @@
 #pragma once
 #include "integrator.h"
 #include "../util.h"
+#include "../bxdf/hg_phase.h"
 
 #include <optional>
 #include <vector>
@@ -33,18 +34,24 @@ class NaivePathIntegrator : public Integrator {
     // Check where we would intersect media.
     bool media_intersection = scene.intersect_media(r, t_min, 9999999.f, media_isect);
     if (media_intersection && media_isect.t < isect.t) {
-      float albedo = 0.5;
-      // Isotropic phase function.
+      HgPhase hg = HgPhase(-0.6, Color(0.5, 0.5, 0.5));
       glm::vec3 wo = -r.dir;
-      glm::vec3 wi = randUniformSphere();
-      float pdf = 1.0 / (4.0 * 3.141592653f);
-      float phase = hgphase(-0.6, glm::dot(wi, wo));
+      std::optional<glm::vec3> wi = hg.sample(media_isect, wo);
+      float pdf = hg.pdf(wo, *wi, media_isect);
+      Color brdf = hg.eval(wo, *wi, media_isect);
+      media_isect.brdf = &hg;
+
+      // float albedo = 0.5;
+      // Isotropic phase function.
+      // glm::vec3 wo = -r.dir;
+      // glm::vec3 wi = randUniformSphere();
+      // float pdf = 1.0 / (4.0 * 3.141592653f);
+      // float phase = hgphase(-0.6, glm::dot(wi, wo));
 
       Color direct = Color(0.0, 0.0, 0.0);
-      if (sample_lights) direct = scene.sample_lights(isect, wo); // Sample lights to estimate direct lighting.
+      if (sample_lights) direct = scene.sample_lights(media_isect, wo); // Sample lights to estimate direct lighting.
 
-      // direct *= transmission(scene, ray); // Account for attenuation by media
-      return direct + (albedo * phase / pdf) * ray_color(scene, Ray(r.at(media_isect.t), wi), depth - 1, max_depth, 0.0f, sample_lights);
+      return direct + (brdf / pdf) * ray_color(scene, Ray(r.at(media_isect.t), *wi), depth - 1, max_depth, 0.0f, sample_lights);
     }
     else if (has_intersection)  {
       glm::vec3 wo = -r.dir;
